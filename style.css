@@ -3,7 +3,7 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    background-image: url("AnimatedShape.svg");
+    background-image: url("img/AnimatedShape.svg");
 }
 
 html {
@@ -12,10 +12,15 @@ html {
 
 h1 {
     font-size: 200px;
-    /* background-image: url("https://media.istockphoto.com/photos/cheerful-senior-man-picture-id153011771?k=20&m=153011771&s=612x612&w=0&h=vBUDBf5sjvvgoWn-2aeZaHb6E5iDg-yVBLOa2PruOSk="); */
     padding: 10vh 0 0 5vw;
     margin: 0;
-    background-image: url("bg_bggenerator_com.jpg");
+
+    background-image: url("img/Polygon Luminary.svg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: bottom right;
+    color: lightblue;
+
     height: 100vh;
     padding-top: 200px;
     box-sizing: border-box;
@@ -24,7 +29,7 @@ h1 {
 section {
     height: 100vh;
     margin: 1vh 20vw 0 20vw;
-    background-image: url("Hexagon.svg");
+    background-image: url("img/Hexagon.svg");
     padding: 8vh 10vw;
 }
 section h2 {

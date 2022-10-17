@@ -8,7 +8,7 @@ let el = document.getElementsByTagName("h1")[0];
 
 function startDoomsday() {
     el.style.fontSize = "500px";
-    document.getElementsByTagName("nav")[0].scrollIntoView(true);
+    window.scrollTo(0, 0);
     let x = window.setInterval(changeColor, 50);
     let y = window.setInterval(rotate, 0);
 }
@@ -83,4 +83,33 @@ function showSlides(n) {
   }
   slides[slideIndex-1].style.display = "block";
   dots[slideIndex-1].className += " active";
+}
+
+
+function openNavigation() {
+    let nav = document.getElementById("nav");
+    nav.style.top = "0";
+    if (nav.className === "nav") {
+        nav.className += " responsive";
+    } else {
+        nav.className = "nav";
+    }
+}
+
+/* When the user scrolls down, hide the navbar. When the user scrolls up, show the navbar */
+var prevScrollpos = window.pageYOffset;
+window.onscroll = function() {
+    var currentScrollPos = window.pageYOffset;
+    let nav = document.getElementById("nav");
+    if (prevScrollpos > currentScrollPos) {
+        nav.style.top = "0";
+    } else {
+        nav.style.top = `-${document.getElementById("nav").offsetHeight - 5}px`;
+        nav.className = "nav";
+    }
+    prevScrollpos = currentScrollPos;
+}
+function hideNavigation() {    
+    nav.style.top = `-${document.getElementById("nav").offsetHeight - 5}px`;
+    nav.className = "nav";
 }

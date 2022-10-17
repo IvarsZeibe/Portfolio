@@ -31,6 +31,7 @@ section {
     margin: 1vh 20vw 0 20vw;
     background-image: url("img/Hexagon.svg");
     padding: 8vh 10vw;
+    overflow: auto;
 }
 section h2 {
     font-size: 100px;
@@ -70,10 +71,13 @@ nav ul {
     margin: 0;
     padding: 0;
 }
-nav li {
+.nav {
     display: inline;
+    transition: top 0.3s;
+    position: fixed;
+    top: 0;
 }
-nav li a {
+nav a {
     display: inline-block;
     padding: 14px 16px;
     text-align: center;
@@ -81,11 +85,42 @@ nav li a {
     text-decoration: none;
     font-size: 30px;
 }
-nav li a:hover {
+nav a:hover {
     background-color: #333333;
 }
-nav li a:active {
+nav a:active {
     background-color: #222222;
+}
+
+.nav .icon {
+    display: none;
+}
+
+/* https://www.w3schools.com/howto/howto_js_topnav_responsive.asp */
+/* When the screen is less than 600 pixels wide, hide all links, except for the first one ("Home"). Show the link that contains should open and close the topnav (.icon) */
+@media screen and (max-width: 600px) {
+    .nav a:not(:first-child) {
+        display: none;
+    }
+    .nav a.icon {
+        float: right;
+        display: block;
+    }
+}
+  
+  /* The "responsive" class is added to the topnav with JavaScript when the user clicks on the icon. This class makes the topnav look good on small screens (display the links vertically instead of horizontally) */
+@media screen and (max-width: 600px) {
+    .nav.responsive {position: fixed;}
+    .nav.responsive a.icon {
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+    .nav.responsive a {
+        float: none;
+        display: block;
+        text-align: left;
+    }
 }
 
 #slides {

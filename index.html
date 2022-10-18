@@ -6,14 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <title>Document</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    title>Document</title>
 </head>
 <body>
     <nav class="nav" id="nav">
         <a href="index.html">Home</a>
         <a href="#" onclick="scrollInto('about'); hideNavigation(); return false;">About</a>
-        <a href="#" onclick="scrollInto('contacts'); hideNavigation(); return false;">Contacts</a>
         <a href="#" onclick="scrollInto('projects'); hideNavigation(); return false;">Projects</a>
+        <a href="#" onclick="scrollInto('contacts'); hideNavigation(); return false;">Contacts</a>
         <a href="javascript:void(0);" class="icon" onclick="openNavigation()">
             <i class="fa fa-bars"></i>
         </a>         
@@ -23,22 +26,13 @@
         <section id="about">
             <div>
             <h2>About</h2>
-            <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
+            <div class="textbox">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
         </div>
         </section>
-        <section id="contacts">
-            <h2>Contacts</h2>
-            <div>
-                <span>Want to get in touch?</span>
-                <ul>
-                    <li>temp@text.com</li>
-                    <li>+371 23456789</li>
-                </ul>
-            </div>
-        </section>
+        
         <section id="projects">
             <h2>Projects</h2>
-            <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
+            <div class="textbox">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
         <!-- Slideshow container -->
             <div id="slides">
                 <div class="slideshow-container">
@@ -77,10 +71,19 @@
                     
             </div>
         </section>
+        <section id="contacts">
+            <h2>Contacts</h2>
+            <div class="textbox">
+                <span>Want to get in touch?</span>
+                <ul>
+                    <li>temp@text.com</li>
+                    <li>+371 23456789</li>
+                </ul>
+            </div>
+        </section>
 
         <button onclick="startDoomsday()">Don't click</button>
     </div>
-    <article></article>
     <footer>Designed & Built by Ivars Žeibe</footer>
     <script src="script.js"></script>
 </body>

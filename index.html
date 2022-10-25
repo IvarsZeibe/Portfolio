@@ -12,16 +12,16 @@
     <title>Ivars Žeibe</title>
 </head>
 <body>
-    <nav class="nav" id="nav">
+    <nav id="nav">
         <a href="index.html">Home</a>
-        <a href="#" onclick="scrollInto('about'); hideNavigation(); return false;">About</a>
-        <a href="#" onclick="scrollInto('projects'); hideNavigation(); return false;">Projects</a>
-        <a href="#" onclick="scrollInto('contacts'); hideNavigation(); return false;">Contacts</a>
-        <a href="javascript:void(0);" class="icon" onclick="openNavigation()">
+        <a href="#about">About</a>
+        <a href="#projects">Projects</a>
+        <a href="#contacts">Contacts</a>
+        <a id="navigationButton" href="javascript:void(0);" class="icon">
             <i class="fa fa-bars"></i>
         </a>         
     </nav>
-    <div class="content">
+    <div id="content">
         <h1>Ivars Žeibe</h1>
         <section id="about">
             <div>
@@ -39,37 +39,28 @@
         <section id="projects">
             <h2>Projects</h2>
             <div class="textbox">I have done projects for studies and as passion projects. You can see some of the projects I have made or collaborated in below.</div>
-        <!-- Slideshow container -->
             <div id="slides">
                 <div class="slideshow-container">
-
-                    <!-- Full-width images with number and caption text -->
-                    <div class="mySlides fade">
-                    <div class="numbertext">1 / 3</div>
-                    <img src="img/tetrisc++.jpg">
-                    <div class="text">Tetris C++</div>
-                    </div>
-                
-                    <div class="mySlides fade">
-                    <div class="numbertext">2 / 3</div>
-                    <img src="img/chesswpf.jpg">
-                    <div class="text">Chess WPF</div>
-                    </div>
-                
-                    <div class="mySlides fade">
-                    <div class="numbertext">3 / 3</div>
-                    <img src="img/airport_system.jpg">
-                    <div class="text">Airport system (for learning purposes)</div>
-                    </div>
-                
-                    <!-- Next and previous buttons -->
+                    <div class="my-slides fade">
+                        <div class="numbertext">1 / 3</div>
+                        <img src="img/tetrisc++.jpg">
+                        <div class="image-caption-text">Tetris C++</div>
+                    </div>                
+                    <div class="my-slides fade">
+                        <div class="numbertext">2 / 3</div>
+                        <img src="img/chesswpf.jpg">
+                        <div class="image-caption-text">Chess WPF</div>
+                    </div>                
+                    <div class="my-slides fade">
+                        <div class="numbertext">3 / 3</div>
+                        <img src="img/airport_system.jpg">
+                        <div class="image-caption-text">Airport system (for learning purposes)</div>
+                    </div>                
                     <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
                     <a class="next" onclick="plusSlides(1)">&#10095;</a>
                 </div>
                 <br>
-                
-                <!-- The dots/circles -->
-                <div style="text-align:center">
+                <div class="dot-container">
                     <span class="dot" onclick="currentSlide(1)"></span>
                     <span class="dot" onclick="currentSlide(2)"></span>
                     <span class="dot" onclick="currentSlide(3)"></span>

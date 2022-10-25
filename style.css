@@ -26,24 +26,38 @@ h1 {
     padding-top: 20vh;
     box-sizing: border-box;
     overflow: auto;
+    box-shadow: inset 0px 5px 50px #000055;
 }
 section {
     height: fit-content;
     margin: 1vh 20vw 0 20vw;
-    /* background-image: url("img/Hexagon.svg"); */
-    /* background-color: gainsboro; */
-    /* background-color: #E7EEF4; */
-    /* background-color: #FFFFFFDD; */
+    padding: 4vh 10vw 10vh 10vw;
+    position: relative;
     background: rgb(231, 238, 244);;
     background: radial-gradient(circle, rgba(235,235,235,1) 0%, rgba(255,255,255,0.8) 80%, rgba(255,255,255,0.7) 100%);
-    padding: 4vh 10vw 10vh 10vw;
-    overflow: auto;
     border-radius: 10px;
 }
+section::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    box-shadow: 0px 0px 30px #000055;
+    border-radius: 10px;
+    z-index: -1;
+}
 section h2 {
+    /* box-shadow: 5px 3px 15px #555555; */
+    box-shadow: 5px 3px 15px #333366;
     color: #232323;
     font-size: 10vw;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #ABBBCF;
+    margin-left: calc(-10px - 10vw);
+    padding: 0px 10vw;
+    border-radius: 10px;
 }
 
 @media screen and (min-width: 1600px) {
@@ -62,20 +76,15 @@ section .textbox {
     padding: 20px;
     border-radius: 10px;
     border: #DDDDDD 1px solid;
-    box-shadow: 10px 10px 5px #717171;
+    box-shadow: 0px 8px 15px #333366;;
     font-size: 20px;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
-/* #about {
-    height: 60vh;
-}
-#contacts {
-    height: 60vh;
-} */
 #contacts span {
     font-size: 30px;
 }
 nav {
+    z-index: 100;
     width: 100%;
     background-color: #122448;    
     top: 0;
@@ -110,10 +119,10 @@ nav a {
     font-family: 'Roboto', sans-serif;;
 }
 nav a:hover {
-    background-color: #333333;
+    background-color: #132955;
 }
 nav a:active {
-    background-color: #222222;
+    background-color: #264581;
 }
 
 .nav .icon {
@@ -153,6 +162,12 @@ nav a:active {
 #slides {box-sizing:border-box;}
 #slides img {
     border-radius: 10px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    height: 40vh;
+    max-width: 100%;
+    box-shadow: 0px 8px 15px #333366;
 }
 
 /* Slideshow container */
@@ -174,7 +189,7 @@ nav a:active {
     width: auto;
     margin-top: -22px;
     padding: 16px;
-    color: white;
+    color: black;
     font-weight: bold;
     font-size: 18px;
     transition: 0.6s ease;
@@ -191,6 +206,7 @@ nav a:active {
 /* On hover, add a black background color with a little bit see-through */
 .prev:hover, .next:hover {
     background-color: rgba(0,0,0,0.8);
+    background-color: rgba(150,150,200,0.8);
 }
 
 /* Caption text */
@@ -198,16 +214,21 @@ nav a:active {
     color: #f2f2f2;
     font-size: 15px;
     padding: 8px 12px;
-    position: absolute;
+    position: relative;
     bottom: 8px;
-    width: 100%;
+    width: min-content;
     text-align: center;
-    box-sizing: border-box;
+    white-space: nowrap;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: -25px;
+    background: #3333AADD;
+    border-radius: 10px;
 }
 
 /* Number text (1/3 etc) */
 .numbertext {
-    color: #f2f2f2;
+    color: black;
     font-size: 12px;
     padding: 8px 12px;
     position: absolute;

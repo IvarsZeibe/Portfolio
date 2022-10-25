@@ -1,5 +1,3 @@
-console.log("hello")
-
 function scrollInto(id) {
     document.getElementById(id).scrollIntoView(true);
 }

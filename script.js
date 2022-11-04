@@ -1,5 +1,5 @@
 function startDoomsday() {
-    let el = document.getElementsByTagName("h1")[0];
+    let el = document.getElementById("hero");
 
     el.style.fontSize = "500px";
     el.style.backgroundImage = "none";
@@ -94,7 +94,7 @@ window.onscroll = () => {
 }
 
 
-let canvas = document.getElementById("flappyBird");
+let canvas = document.getElementById("hero");
 let context = canvas.getContext("2d");
 let birdPos = {x: 100, y: 400};
 let hasJumped = false;
@@ -122,12 +122,24 @@ function updateGame() {
     vh = canvas.height / 100;
     
     context.font = `bold 10vw TimesNewRoman`;
-    context.fillStyle = "lightblue";
-    context.fillText("Ivars Žeibe.", 5 * vw, 10 * vw + 20 * vh);
+    if (isEasterEggActive) {
+        context.fillStyle = "#add8e644";     
+    } else {
+        context.fillStyle = "lightblue"; // #add8e6
+    }
 
     let text = context.measureText("Ivars Že");
     let text2 = context.measureText(".");
     let text3 = context.measureText("i");
+    
+    context.fillText("Ivars Žeibe", 5 * vw, 10 * vw + 20 * vh);
+    context.fillStyle = "#81c1d6";
+    context.save();
+    context.rect(dotHitbox.x, dotHitbox.y, dotHitbox.w, dotHitbox.h);
+    context.clip();
+    context.fillText("i", 5 * vw + text.width, 10 * vw + 20 * vh);
+    context.restore();
+
     dotHitbox.w = text2.width * 0.8;
     dotHitbox.h = text2.width * 0.9;
     dotHitbox.x = 5 * vw + text.width + (text3.width - text2.width)/2 + text2.width * 0.12;
@@ -148,12 +160,14 @@ function updateGame() {
         
         context.clearRect(dotHitbox.x, dotHitbox.y, dotHitbox.w, dotHitbox.h);
         // draw dot
+        context.fillStyle = "lightblue";
         context.beginPath();
         context.arc(birdPos.x, birdPos.y, dotHitbox.w/2, 0, 2 *Math.PI);
-        context.stroke();
+        context.fill();
     }
 
     if (isEasterEggActive) {
+        // draw ceiling
         context.fillStyle = "#000000";
         context.fillRect(0, 0, canvas.width, 10 * vh);
 
@@ -163,33 +177,38 @@ function updateGame() {
         birdPos.y += velocity.y * 0.1;
         velocity.y += 1;
         // draw dot
+        context.fillStyle = "lightblue";
         context.beginPath();
         context.arc(birdPos.x, birdPos.y, 20, 0, 2 *Math.PI);
-        context.stroke();
+        context.fill();
         hasJumped = false;
         if (currenTick - obstacleSpawnedTick > obstacleSpawningCooldown) {
-            obstacles.push(createObstacle(canvas.width - 100, (canvas.height - 10*vh) / 2 + 10*vh, 20, canvas.height - 10*vh)); // maybe 10vh
+            obstacles.push(createObstacle(canvas.width - 100, (canvas.height - 10*vh) / 2 + 10*vh, 40, canvas.height - 10*vh)); // maybe 10vh
             obstacleSpawnedTick = currenTick;
         }
         obstacles.forEach(o => {
             o.x -= 5;
             drawObstalce(context, o);
         });
-        obstacles.some(o => {
-            let topRectHeight = o.gapY - o.gapHeight / 2;
-            let bottomRectHeight = o.height - (o.gapY + o.gapHeight / 2);
-            // overlay
-            // context.fillStyle = "#00000044"
-            // drawRect(context, o.x, o.y - o.height/2 + topRectHeight/2, o.width, topRectHeight);
-            // drawRect(context, o.x, o.y + o.height/2 - bottomRectHeight/2, o.width, bottomRectHeight);
-
-            if (isCollidingCircleRecteangle(birdPos.x, birdPos.y, 20, o.x, o.y - o.height/2 + topRectHeight/2, o.width, topRectHeight) ||
-            isCollidingCircleRecteangle(birdPos.x, birdPos.y, 20, o.x, o.y + o.height/2 - bottomRectHeight/2, o.width, bottomRectHeight)) {
-                resetFlappyBird();
-                return true;
-            }
-            return false;
-        })
+        if (birdPos.y - 10 < 10 * vh || birdPos.y + 10 > canvas.height) {
+            resetFlappyBird();
+        } else {
+            obstacles.some(o => {
+                let topRectHeight = o.gapY - o.gapHeight / 2;
+                let bottomRectHeight = o.height - (o.gapY + o.gapHeight / 2);
+                // overlay
+                // context.fillStyle = "#00000044"
+                // drawRect(context, o.x, o.y - o.height/2 + topRectHeight/2, o.width, topRectHeight);
+                // drawRect(context, o.x, o.y + o.height/2 - bottomRectHeight/2, o.width, bottomRectHeight);
+                
+                if (isCollidingCircleRecteangle(birdPos.x, birdPos.y, 20, o.x, o.y - o.height/2 + topRectHeight/2, o.width, topRectHeight) ||
+                isCollidingCircleRecteangle(birdPos.x, birdPos.y, 20, o.x, o.y + o.height/2 - bottomRectHeight/2, o.width, bottomRectHeight)) {
+                    resetFlappyBird();
+                    return true;
+                }
+                return false;
+            })
+        }
         
     }
 }
@@ -213,6 +232,7 @@ function resetFlappyBird() {
     birdPos.y = 400;
     velocity.y = 0;
     velocity.x = 10;
+    obstacles = [];
 }
 
 
@@ -233,8 +253,9 @@ function createObstacle(x, y, w, h) {
 function drawObstalce(ctx, obstacle) {
     let topRectHeight = obstacle.gapY - obstacle.gapHeight / 2;
     let bottomRectHeight = obstacle.height - (obstacle.gapY + obstacle.gapHeight / 2);
-    ctx.strokeRect(obstacle.x - obstacle.width / 2, obstacle.y - obstacle.height / 2, obstacle.width, topRectHeight);
-    ctx.strokeRect(obstacle.x - obstacle.width / 2, obstacle.y + obstacle.height / 2 - bottomRectHeight, obstacle.width, bottomRectHeight);
+    ctx.fillStyle = "lightblue";
+    ctx.fillRect(obstacle.x - obstacle.width / 2, obstacle.y - obstacle.height / 2, obstacle.width, topRectHeight);
+    ctx.fillRect(obstacle.x - obstacle.width / 2, obstacle.y + obstacle.height / 2 - bottomRectHeight, obstacle.width, bottomRectHeight);
 }
 
 

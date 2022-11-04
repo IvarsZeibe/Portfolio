@@ -172,7 +172,6 @@ class Obstacle {
         this.bottomPartHitbox.y += y;
     }
     isCollidingWith(hitbox) {
-        console.log(this.topPartHitbox, hitbox);
         return this.topPartHitbox.isCollidingWith(hitbox) || this.bottomPartHitbox.isCollidingWith(hitbox);
     }
     draw(context) {
@@ -264,7 +263,7 @@ function updateGame() {
 
     if (isEasterEggStarted) {
         let c = Math.sqrt(Math.pow(starPosition.x - birdHitbox.x, 2) + Math.pow(starPosition.y - birdHitbox.y, 2));
-        let speed = 5;//////////////////////////
+        let speed = 0.5 * Math.sqrt(vw*vw + vh*vh);
         birdHitbox.x += (starPosition.x - birdHitbox.x) / c * speed;
         birdHitbox.y += (starPosition.y - birdHitbox.y) / c * speed;
         if (Math.abs(starPosition.x - birdHitbox.x) + Math.abs(starPosition.x - birdHitbox.x) < speed*2) {
@@ -284,7 +283,7 @@ function updateGame() {
         drawCeiling(canvas.width / ratio, ceilingHeight)
 
         birdHitbox.y += velocity.y * 0.1;
-        velocity.y += 1;
+        velocity.y += 0.15*vh;
         // draw dot
         context.fillStyle = "lightblue";
         context.beginPath();
@@ -298,7 +297,7 @@ function updateGame() {
             obstacleSpawnedTick = currenTick;
         }
         obstacles.forEach(o => {
-            o.move(-5, 0);
+            o.move(-0.4*vw, 0);
             o.draw(context);
         });
         if (birdHitbox.y - birdHitbox.radius < ceilingHeight || birdHitbox.y + birdHitbox.radius > canvas.height / ratio) {
@@ -327,7 +326,7 @@ document.addEventListener("keydown", (e) => {
     if (e.key == " " && e.target == document.body) {
         e.preventDefault();
         if (!hasJumped) {
-            velocity.y = -40;
+            velocity.y = -6*vh;
             hasJumped = true;
         }
     }

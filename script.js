@@ -94,13 +94,111 @@ window.onscroll = () => {
 }
 
 
+class Hitbox {
+    constructor(shape, x, y, width, height) {
+        this.x = x;
+        this.y = y;
+        this.shape = shape;
+        if (shape == "rectangle") {
+            this.width = width;
+            this.height = height;
+        } else if (shape ==  "circle") {
+            this.radius = width / 2;
+        } else {
+            throw "Invalid shape";
+        }
+    }
+    static createRectangle(x, y, width, height) {
+        return new Hitbox("rectangle", x, y, width, height);
+    }
+    static createCircle(x, y, radius) {
+        return new Hitbox("circle", x, y, radius*2);
+    }
+    isCollidingWithPoint(x, y) {
+        if (this.shape = "rectangle") {
+            let halfWidth = this.width / 2;
+            let halfHeight = this.height / 2;
+            return (
+                x >= this.x - halfWidth && x <= this.x + halfWidth &&
+                y >= this.y - halfHeight && y <= this.y + halfHeight
+            );
+        } else {
+            throw "Not implemented";
+        }
+    }
+    isCollidingWith(hitbox) {
+        if (hitbox.shape == "rectangle") {
+            if (this.shape == "rectangle") {
+                return this.isCollidingRectangleRectangle(this, hitbox);
+            } else {
+                return this.isCollidingRectangleCircle(this, hitbox);
+            }
+        } else {
+            if (this.shape == "rectangle") {
+                return this.isCollidingRectangleCircle(this, hitbox);
+            } else {
+                throw "Not implemented";
+            }
+        }
+    }
+    isCollidingRectangleRectangle() {
+        throw "Not implemented"
+    }
+    isCollidingRectangleCircle(rectangle, circle) {
+        return (
+            circle.x + circle.radius > rectangle.x - rectangle.width/2 &&
+            circle.x - circle.radius < rectangle.x + rectangle.width/2 &&
+            circle.y + circle.radius > rectangle.y - rectangle.height/2 &&
+            circle.y - circle.radius < rectangle.y + rectangle.height/2
+        );
+    }
+}
+class Obstacle {
+    constructor(x, y, width, height) {
+        this.width = width;
+        this.height = height; 
+        this.gapHeight = height*0.2;
+        this.gapY = this.gapHeight + Math.random() * (height - 2*this.gapHeight); 
+        this.topPartHeight = this.gapY - this.gapHeight / 2;
+        this.bottomPartHeight = height - (this.gapY + this.gapHeight / 2);
+        
+        this.topPartHitbox = Hitbox.createRectangle(x - this.width/2, y - this.height/2 + this.topPartHeight/2, this.width, this.topPartHeight);
+        this.bottomPartHitbox = Hitbox.createRectangle(x - this.width/2, y + this.height/2 - this.bottomPartHeight/2, this.width, this.bottomPartHeight);
+    }
+    move(x, y) {
+        this.topPartHitbox.x += x;
+        this.topPartHitbox.y += y;
+        this.bottomPartHitbox.x += x;
+        this.bottomPartHitbox.y += y;
+    }
+    isCollidingWith(hitbox) {
+        console.log(this.topPartHitbox, hitbox);
+        return this.topPartHitbox.isCollidingWith(hitbox) || this.bottomPartHitbox.isCollidingWith(hitbox);
+    }
+    draw(context) {
+        context.fillStyle = "lightblue";
+        context.fillRect(
+            this.topPartHitbox.x - this.topPartHitbox.width/2,
+            this.topPartHitbox.y - this.topPartHitbox.height/2,
+            this.topPartHitbox.width,
+            this.topPartHitbox.height
+        );
+        context.fillRect(
+            this.bottomPartHitbox.x - this.bottomPartHitbox.width/2,
+            this.bottomPartHitbox.y - this.bottomPartHitbox.height/2,
+            this.bottomPartHitbox.width,
+            this.bottomPartHitbox.height
+        );
+    }
+}
+
 let canvas = document.getElementById("hero");
 let context = canvas.getContext("2d");
-let birdPos = {x: 100, y: 400};
+let birdHitbox = Hitbox.createCircle(100, 400, 20)
 let hasJumped = false;
 let velocity = {x: 10, y: 0};
 window.setInterval(updateGame, 10);
-let dotHitbox = {x: -1, y: -1, w: 0, h: 0};
+let dotHitbox = Hitbox.createRectangle(-1, -1, 0, 0);
 let isEasterEggActive = false;
 let isEasterEggStarted = false;
 let starPosition = {x: 100, y: 400};
@@ -116,20 +214,22 @@ function updateGame() {
     context.clearRect(0, 0, canvas.width, canvas.height); 
     
     const ratio = Math.ceil(window.devicePixelRatio);
-    console.log(ratio);
     canvas.width = parseFloat(window.getComputedStyle(canvas, null).width) * ratio;
     canvas.height = parseFloat(window.getComputedStyle(canvas, null).height) * ratio;
     canvas.getContext('2d').setTransform(ratio, 0, 0, ratio, 0, 0);
 
-    // canvas.width = parseFloat(window.getComputedStyle(canvas, null).width);
-    // canvas.height = parseFloat(window.getComputedStyle(canvas, null).height);
-
     vw = canvas.width / ratio / 100;
     vh = canvas.height / ratio / 100;
     
+    let navHeight = parseFloat(window.getComputedStyle(document.getElementById("nav"), null).height);
+    const ceilingHeight = navHeight + 4*vh;
+    starPosition.x = 10*vh;
+    starPosition.y = (canvas.height - ceilingHeight) / ratio / 2;
+
+    const fontSize = 10*vw;
     context.font = `bold 10vw TimesNewRoman`;
     if (isEasterEggActive) {
-        context.fillStyle = "#add8e644";     
+        context.fillStyle = "#add8e644";
     } else {
         context.fillStyle = "lightblue"; // #add8e6
     }
@@ -138,77 +238,74 @@ function updateGame() {
     let text2 = context.measureText(".");
     let text3 = context.measureText("i");
     
-    context.fillText("Ivars Žeibe", 5 * vw, 10 * vw + 20 * vh);
+    const textPaddingLeft = 5*vw;
+    const textPaddingTop = 20*vh
+    context.fillText("Ivars Žeibe", textPaddingLeft, fontSize + textPaddingTop);
     context.fillStyle = "#81c1d6";
     context.save();
-    context.rect(dotHitbox.x, dotHitbox.y, dotHitbox.w, dotHitbox.h);
+    context.rect(dotHitbox.x - dotHitbox.width/2, dotHitbox.y - dotHitbox.height/2, dotHitbox.width, dotHitbox.height);
     context.clip();
-    context.fillText("i", 5 * vw + text.width, 10 * vw + 20 * vh);
+    context.fillText("i", textPaddingLeft + text.width, fontSize + textPaddingTop);
     context.restore();
 
-    dotHitbox.w = text2.width * 0.8;
-    dotHitbox.h = text2.width * 0.9;
-    dotHitbox.x = 5 * vw + text.width + (text3.width - text2.width)/2 + text2.width * 0.12;
-    dotHitbox.y = 20 * vh - 8 * vw + text2.width * 4 + text2.width * 0.3;
+    if (isEasterEggActive || isEasterEggStarted) {        
+        // clears dot
+        context.clearRect(dotHitbox.x - dotHitbox.width/2, dotHitbox.y - dotHitbox.height/2, dotHitbox.width, dotHitbox.height);
+    }
+
+    dotHitbox.width = text2.width * 0.8;
+    dotHitbox.height = text2.width * 0.9;
+    dotHitbox.x = textPaddingLeft + text.width + (text3.width - text2.width)/2 + text2.width * 0.12 + dotHitbox.width / 2;
+    dotHitbox.y = textPaddingTop - 8 * vw + text2.width * 4 + text2.width * 0.3 + dotHitbox.height / 2;
+    birdHitbox.radius = dotHitbox.width/2;
     // Transparent overlay
     // context.fillStyle = "#00000044"
-    // context.fillRect(dotHitbox.x, dotHitbox.y, dotHitbox.w, dotHitbox.h);
+    // context.fillRect(dotHitbox.x - dotHitbox.width/2, dotHitbox.y - dotHitbox.height/2, dotHitbox.width, dotHitbox.height);
 
     if (isEasterEggStarted) {
-        let c = Math.sqrt(Math.pow(starPosition.x - birdPos.x, 2) + Math.pow(starPosition.y - birdPos.y, 2));
+        let c = Math.sqrt(Math.pow(starPosition.x - birdHitbox.x, 2) + Math.pow(starPosition.y - birdHitbox.y, 2));
         let speed = 5;//////////////////////////
-        birdPos.x += (starPosition.x - birdPos.x) / c * speed;
-        birdPos.y += (starPosition.y - birdPos.y) / c * speed;
-        if (Math.abs(starPosition.x - birdPos.x) + Math.abs(starPosition.x - birdPos.x) < speed*2) {
+        birdHitbox.x += (starPosition.x - birdHitbox.x) / c * speed;
+        birdHitbox.y += (starPosition.y - birdHitbox.y) / c * speed;
+        if (Math.abs(starPosition.x - birdHitbox.x) + Math.abs(starPosition.x - birdHitbox.x) < speed*2) {
             isEasterEggStarted = false;
             isEasterEggActive = true;
         }
         
-        context.clearRect(dotHitbox.x, dotHitbox.y, dotHitbox.w, dotHitbox.h);
         // draw dot
         context.fillStyle = "lightblue";
         context.beginPath();
-        context.arc(birdPos.x, birdPos.y, dotHitbox.w/2, 0, 2 *Math.PI);
+        context.arc(birdHitbox.x, birdHitbox.y, birdHitbox.radius, 0, 2 *Math.PI);
         context.fill();
     }
 
     if (isEasterEggActive) {
         // draw ceiling
-        context.fillStyle = "#000000";
-        context.fillRect(0, 0, canvas.width / ratio, 10 * vh);
+        drawCeiling(canvas.width / ratio, ceilingHeight)
 
-        // clears dot
-        context.clearRect(dotHitbox.x, dotHitbox.y, dotHitbox.w, dotHitbox.h);
-
-        birdPos.y += velocity.y * 0.1;
+        birdHitbox.y += velocity.y * 0.1;
         velocity.y += 1;
         // draw dot
         context.fillStyle = "lightblue";
         context.beginPath();
-        context.arc(birdPos.x, birdPos.y, 20, 0, 2 *Math.PI);
+        context.arc(birdHitbox.x, birdHitbox.y, birdHitbox.radius, 0, 2 *Math.PI);
         context.fill();
+
         hasJumped = false;
+
         if (currenTick - obstacleSpawnedTick > obstacleSpawningCooldown) {
-            obstacles.push(createObstacle(canvas.width / ratio - 100, (canvas.height / ratio - 10*vh) / 2 + 10*vh, 40, canvas.height / ratio - 10*vh)); // maybe 10vh
+            obstacles.push(new Obstacle(canvas.width / ratio - 100, (canvas.height / ratio - 10*vh) / 2 + ceilingHeight, 4*vw, canvas.height / ratio - 10*vh)); // maybe 10vh
             obstacleSpawnedTick = currenTick;
         }
         obstacles.forEach(o => {
-            o.x -= 5;
-            drawObstalce(context, o);
+            o.move(-5, 0);
+            o.draw(context);
         });
-        if (birdPos.y - 10 < 10 * vh || birdPos.y + 10 > canvas.height / ratio) {
+        if (birdHitbox.y - birdHitbox.radius < ceilingHeight || birdHitbox.y + birdHitbox.radius > canvas.height / ratio) {
             resetFlappyBird();
         } else {
             obstacles.some(o => {
-                let topRectHeight = o.gapY - o.gapHeight / 2;
-                let bottomRectHeight = o.height - (o.gapY + o.gapHeight / 2);
-                // overlay
-                // context.fillStyle = "#00000044"
-                // drawRect(context, o.x, o.y - o.height/2 + topRectHeight/2, o.width, topRectHeight);
-                // drawRect(context, o.x, o.y + o.height/2 - bottomRectHeight/2, o.width, bottomRectHeight);
-                
-                if (isCollidingCircleRecteangle(birdPos.x, birdPos.y, 20, o.x, o.y - o.height/2 + topRectHeight/2, o.width, topRectHeight) ||
-                isCollidingCircleRecteangle(birdPos.x, birdPos.y, 20, o.x, o.y + o.height/2 - bottomRectHeight/2, o.width, bottomRectHeight)) {
+                if (o.isCollidingWith(birdHitbox)) {
                     resetFlappyBird();
                     return true;
                 }
@@ -218,6 +315,14 @@ function updateGame() {
         
     }
 }
+function writeHeroText() {
+    
+}
+function drawCeiling(width, height) {
+    context.fillStyle = "#000000";
+    context.fillRect(0, 0, width, height);
+
+}
 document.addEventListener("keydown", (e) => {
     if (e.key == " " && e.target == document.body) {
         e.preventDefault();
@@ -226,77 +331,36 @@ document.addEventListener("keydown", (e) => {
             hasJumped = true;
         }
     }
-})
-document.addEventListener("keydown", (e) => {
     if (e.key == "r" && e.target == document.body) {
         e.preventDefault();
         resetFlappyBird();
     }
-})
+});
 function resetFlappyBird() {
-    birdPos.x = 100;
-    birdPos.y = 400;
+    birdHitbox.x = starPosition.x;
+    birdHitbox.y = starPosition.y;
     velocity.y = 0;
     velocity.x = 10;
     obstacles = [];
 }
-
-
-function createObstacle(x, y, w, h) {
-    // x, gapY, gapHeight
-    let _gapHeight = h * 0.2;
-    console.log(_gapHeight)
-    return {
-        x: x,
-        y: y,
-        gapY: _gapHeight + Math.random() * (h - 2 *_gapHeight),
-        //gapHeight: 200 + Math.random() * 200, //200-400
-        gapHeight: _gapHeight,
-        width: w,
-        height: h
-    };
-}
-
-function drawObstalce(ctx, obstacle) {
-    let topRectHeight = obstacle.gapY - obstacle.gapHeight / 2;
-    let bottomRectHeight = obstacle.height - (obstacle.gapY + obstacle.gapHeight / 2);
-    ctx.fillStyle = "lightblue";
-    ctx.fillRect(obstacle.x - obstacle.width / 2, obstacle.y - obstacle.height / 2, obstacle.width, topRectHeight);
-    ctx.fillRect(obstacle.x - obstacle.width / 2, obstacle.y + obstacle.height / 2 - bottomRectHeight, obstacle.width, bottomRectHeight);
-}
-
-
 document.addEventListener("click", (e) => {
     let rect = canvas.getBoundingClientRect();
-    if (!isEasterEggStarted && !isEasterEggActive && isPointInRectangleFromTopLeft(e.clientX - rect.left, e.clientY - rect.top, dotHitbox.x, dotHitbox.y, dotHitbox.w, dotHitbox.h)) {
-        birdPos.x = dotHitbox.x + dotHitbox.w/2 ;
-        birdPos.y = dotHitbox.y + dotHitbox.h/2;
+    if (!isEasterEggStarted && !isEasterEggActive && dotHitbox.isCollidingWithPoint(e.clientX - rect.left, e.clientY - rect.top)) {
+        // && isPointInRectangleFromTopLeft(e.clientX - rect.left, e.clientY - rect.top, dotHitbox.x, dotHitbox.y, dotHitbox.w, dotHitbox.h)) {
+        birdHitbox.x = dotHitbox.x;
+        birdHitbox.y = dotHitbox.y;
         isEasterEggStarted = true;
     }
 });
-
-
-function isPointInRectangleFromTopLeft(x, y, x1, y1, w1, h1) {
-    return isPointInRectangle(x, y, x1 + w1/2, y1 + h1/2, w1, h1);
-}
-function isPointInRectangle(x, y, x1, y1, w1, h1) {
-    return (x >= x1 - w1 / 2 && x <= x1 + w1 / 2) && (y >= y1 - h1 / 2 && y <= y1 + h1 / 2);
-}
 function startEasterEgg() {
     let x = 0;
-    birdPos.x = dotHitbox.x + dotHitbox.w/2;
-    birdPos.y = dotHitbox.y + dotHitbox.h/2;
+    birdHitbox.x = dotHitbox.x;
+    birdHitbox.y = dotHitbox.y;
     window.setTimeout(() => {
         x++;
-        let c = Math.sqrt((starPosition.x - birdPos.x)^2 + (starPosition.y - birdPos.y)^2);
+        let c = Math.sqrt((starPosition.x - birdHitbox.x)^2 + (starPosition.y - birdHitbox.y)^2);
         let speed = 10;
-        birdPos.x += birdPos.x / c * speed;
-        birdPos.y += birdPos.y / c * speed;
+        birdHitbox.x += birdHitbox.x / c * speed;
+        birdHitbox.y += birdHitbox.y / c * speed;
     }, 10)
-}
-function isCollidingCircleRecteangle(x1, y1, r, x2, y2, w, h) {
-    return x1 + r/2 > x2 - w/2 && x1 - r/2 < x2 + w/2 && y1 + r/2 > y2 - h/2 && y1 - r/2 < y2 + h/2;
-}
-function drawRect(context, x, y ,w ,h) {
-    context.fillRect(x - w/2, y - h/2, w, h);
 }

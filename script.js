@@ -115,11 +115,17 @@ function updateGame() {
     currenTick++;
     context.clearRect(0, 0, canvas.width, canvas.height); 
     
-    canvas.width = parseFloat(window.getComputedStyle(canvas, null).width);
-    canvas.height = parseFloat(window.getComputedStyle(canvas, null).height);
+    const ratio = Math.ceil(window.devicePixelRatio);
+    console.log(ratio);
+    canvas.width = parseFloat(window.getComputedStyle(canvas, null).width) * ratio;
+    canvas.height = parseFloat(window.getComputedStyle(canvas, null).height) * ratio;
+    canvas.getContext('2d').setTransform(ratio, 0, 0, ratio, 0, 0);
 
-    vw = canvas.width / 100;
-    vh = canvas.height / 100;
+    // canvas.width = parseFloat(window.getComputedStyle(canvas, null).width);
+    // canvas.height = parseFloat(window.getComputedStyle(canvas, null).height);
+
+    vw = canvas.width / ratio / 100;
+    vh = canvas.height / ratio / 100;
     
     context.font = `bold 10vw TimesNewRoman`;
     if (isEasterEggActive) {
@@ -150,7 +156,7 @@ function updateGame() {
 
     if (isEasterEggStarted) {
         let c = Math.sqrt(Math.pow(starPosition.x - birdPos.x, 2) + Math.pow(starPosition.y - birdPos.y, 2));
-        let speed = 5;
+        let speed = 5;//////////////////////////
         birdPos.x += (starPosition.x - birdPos.x) / c * speed;
         birdPos.y += (starPosition.y - birdPos.y) / c * speed;
         if (Math.abs(starPosition.x - birdPos.x) + Math.abs(starPosition.x - birdPos.x) < speed*2) {
@@ -169,7 +175,7 @@ function updateGame() {
     if (isEasterEggActive) {
         // draw ceiling
         context.fillStyle = "#000000";
-        context.fillRect(0, 0, canvas.width, 10 * vh);
+        context.fillRect(0, 0, canvas.width / ratio, 10 * vh);
 
         // clears dot
         context.clearRect(dotHitbox.x, dotHitbox.y, dotHitbox.w, dotHitbox.h);
@@ -183,14 +189,14 @@ function updateGame() {
         context.fill();
         hasJumped = false;
         if (currenTick - obstacleSpawnedTick > obstacleSpawningCooldown) {
-            obstacles.push(createObstacle(canvas.width - 100, (canvas.height - 10*vh) / 2 + 10*vh, 40, canvas.height - 10*vh)); // maybe 10vh
+            obstacles.push(createObstacle(canvas.width / ratio - 100, (canvas.height / ratio - 10*vh) / 2 + 10*vh, 40, canvas.height / ratio - 10*vh)); // maybe 10vh
             obstacleSpawnedTick = currenTick;
         }
         obstacles.forEach(o => {
             o.x -= 5;
             drawObstalce(context, o);
         });
-        if (birdPos.y - 10 < 10 * vh || birdPos.y + 10 > canvas.height) {
+        if (birdPos.y - 10 < 10 * vh || birdPos.y + 10 > canvas.height / ratio) {
             resetFlappyBird();
         } else {
             obstacles.some(o => {
@@ -239,6 +245,7 @@ function resetFlappyBird() {
 function createObstacle(x, y, w, h) {
     // x, gapY, gapHeight
     let _gapHeight = h * 0.2;
+    console.log(_gapHeight)
     return {
         x: x,
         y: y,

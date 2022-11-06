@@ -314,23 +314,16 @@ function updateGame() {
         
     }
 }
-function writeHeroText() {
-    
-}
 function drawCeiling(width, height) {
     context.fillStyle = "#000000";
     context.fillRect(0, 0, width, height);
-
 }
 document.addEventListener("keydown", (e) => {
     if (e.key == " " && e.target == document.body) {
         e.preventDefault();
-        if (!hasJumped) {
-            velocity.y = -6*vh;
-            hasJumped = true;
-        }
+        jump();
     }
-    if (e.key == "r" && e.target == document.body) {
+    else if (e.key == "r" && e.target == document.body) {
         e.preventDefault();
         resetFlappyBird();
     }
@@ -351,15 +344,10 @@ document.addEventListener("click", (e) => {
         isEasterEggStarted = true;
     }
 });
-function startEasterEgg() {
-    let x = 0;
-    birdHitbox.x = dotHitbox.x;
-    birdHitbox.y = dotHitbox.y;
-    window.setTimeout(() => {
-        x++;
-        let c = Math.sqrt((starPosition.x - birdHitbox.x)^2 + (starPosition.y - birdHitbox.y)^2);
-        let speed = 10;
-        birdHitbox.x += birdHitbox.x / c * speed;
-        birdHitbox.y += birdHitbox.y / c * speed;
-    }, 10)
+canvas.addEventListener("mousedown", jump)
+function jump() {
+    if (isEasterEggActive && !hasJumped) {
+        velocity.y = -6*vh;
+        hasJumped = true;
+    }
 }

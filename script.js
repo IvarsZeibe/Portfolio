@@ -155,6 +155,7 @@ class Hitbox {
 }
 class Obstacle {
     constructor(x, y, width, height) {
+        this.x = x;
         this.width = width;
         this.height = height; 
         this.gapHeight = height*0.2;
@@ -166,6 +167,7 @@ class Obstacle {
         this.bottomPartHitbox = Hitbox.createRectangle(x - this.width/2, y + this.height/2 - this.bottomPartHeight/2, this.width, this.bottomPartHeight);
     }
     move(x, y) {
+        this.x += x;
         this.topPartHitbox.x += x;
         this.topPartHitbox.y += y;
         this.bottomPartHitbox.x += x;
@@ -215,7 +217,7 @@ function updateGame() {
     const ratio = Math.ceil(window.devicePixelRatio);
     canvas.width = parseFloat(window.getComputedStyle(canvas, null).width) * ratio;
     canvas.height = parseFloat(window.getComputedStyle(canvas, null).height) * ratio;
-    canvas.getContext('2d').setTransform(ratio, 0, 0, ratio, 0, 0);
+    context.setTransform(ratio, 0, 0, ratio, 0, 0);
 
     vw = canvas.width / ratio / 100;
     vh = canvas.height / ratio / 100;
@@ -291,15 +293,16 @@ function updateGame() {
         context.fill();
 
         hasJumped = false;
-
         if (currenTick - obstacleSpawnedTick > obstacleSpawningCooldown) {
-            obstacles.push(new Obstacle(canvas.width / ratio - 100, (canvas.height / ratio - 10*vh) / 2 + ceilingHeight, 4*vw, canvas.height / ratio - 10*vh)); // maybe 10vh
+            let obstacleWidth = 4*vw;
+            obstacles.push(new Obstacle(canvas.width / ratio + obstacleWidth/2, (canvas.height / ratio - 10*vh) / 2 + ceilingHeight, obstacleWidth, canvas.height / ratio - 10*vh)); // maybe 10vh
             obstacleSpawnedTick = currenTick;
         }
         obstacles.forEach(o => {
             o.move(-0.4*vw, 0);
             o.draw(context);
         });
+        obstacles = obstacles.filter(o => o.x >= -o.width / 2);
         if (birdHitbox.y - birdHitbox.radius < ceilingHeight || birdHitbox.y + birdHitbox.radius > canvas.height / ratio) {
             resetFlappyBird();
         } else {
@@ -338,13 +341,12 @@ function resetFlappyBird() {
 document.addEventListener("click", (e) => {
     let rect = canvas.getBoundingClientRect();
     if (!isEasterEggStarted && !isEasterEggActive && dotHitbox.isCollidingWithPoint(e.clientX - rect.left, e.clientY - rect.top)) {
-        // && isPointInRectangleFromTopLeft(e.clientX - rect.left, e.clientY - rect.top, dotHitbox.x, dotHitbox.y, dotHitbox.w, dotHitbox.h)) {
         birdHitbox.x = dotHitbox.x;
         birdHitbox.y = dotHitbox.y;
         isEasterEggStarted = true;
     }
 });
-canvas.addEventListener("mousedown", jump)
+canvas.addEventListener("mousedown", jump);
 function jump() {
     if (isEasterEggActive && !hasJumped) {
         velocity.y = -6*vh;

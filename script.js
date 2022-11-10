@@ -198,7 +198,6 @@ let context = canvas.getContext("2d");
 let birdHitbox = Hitbox.createCircle(100, 400, 20)
 let hasJumped = false;
 let velocity = {x: 10, y: 0};
-window.setInterval(updateGame, 10);
 let dotHitbox = Hitbox.createRectangle(-1, -1, 0, 0);
 let isEasterEggActive = false;
 let isEasterEggStarted = false;
@@ -209,12 +208,17 @@ let obstacleSpawnedTick = 0;
 const obstacleSpawningCooldown = 100;
 let vh = 0;
 let vw = 0;
+let ceilingHeight = 0;
+let screenWidth = 0;
+let ratio = 0;
+document.fonts.ready.then(redraw);
 
-function updateGame() {
-    currenTick++;
+addEventListener("resize", redraw);
+
+function redraw() {
     context.clearRect(0, 0, canvas.width, canvas.height); 
     
-    const ratio = Math.ceil(window.devicePixelRatio);
+    ratio = Math.ceil(window.devicePixelRatio);
     canvas.width = parseFloat(window.getComputedStyle(canvas, null).width) * ratio;
     canvas.height = parseFloat(window.getComputedStyle(canvas, null).height) * ratio;
     context.setTransform(ratio, 0, 0, ratio, 0, 0);
@@ -223,12 +227,12 @@ function updateGame() {
     vh = canvas.height / ratio / 100;
     
     let navHeight = parseFloat(window.getComputedStyle(document.getElementById("nav"), null).height);
-    const ceilingHeight = navHeight + 4*vh;
+    ceilingHeight = navHeight + 4*vh;
     starPosition.x = 10*vh;
     starPosition.y = (canvas.height - ceilingHeight) / ratio / 2;
 
     const fontSize = 10*vw;
-    context.font = `bold 10vw TimesNewRoman`;
+    context.font = `bold 10vw TimesNewRomanBold`;
     if (isEasterEggActive) {
         context.fillStyle = "#add8e644";
     } else {
@@ -240,7 +244,14 @@ function updateGame() {
     let text3 = context.measureText("i");
     
     const textPaddingLeft = 5*vw;
-    const textPaddingTop = 20*vh
+    const textPaddingTop = 20*vh;
+
+    dotHitbox.width = text2.width * 0.8;
+    dotHitbox.height = text2.width * 0.9;
+    dotHitbox.x = textPaddingLeft + text.width + (text3.width - text2.width)/2 + text2.width * 0.12 + dotHitbox.width / 2;
+    dotHitbox.y = textPaddingTop - 8 * vw + text2.width * 4 + text2.width * 0.3 + dotHitbox.height / 2;
+
+    birdHitbox.radius = dotHitbox.width/2;
     context.fillText("Ivars Žeibe", textPaddingLeft, fontSize + textPaddingTop);
     context.fillStyle = "#81c1d6";
     context.save();
@@ -254,11 +265,11 @@ function updateGame() {
         context.clearRect(dotHitbox.x - dotHitbox.width/2, dotHitbox.y - dotHitbox.height/2, dotHitbox.width, dotHitbox.height);
     }
 
-    dotHitbox.width = text2.width * 0.8;
-    dotHitbox.height = text2.width * 0.9;
-    dotHitbox.x = textPaddingLeft + text.width + (text3.width - text2.width)/2 + text2.width * 0.12 + dotHitbox.width / 2;
-    dotHitbox.y = textPaddingTop - 8 * vw + text2.width * 4 + text2.width * 0.3 + dotHitbox.height / 2;
-    birdHitbox.radius = dotHitbox.width/2;
+}
+
+function updateGame() {
+    currenTick++;
+    redraw();
     // Transparent overlay
     // context.fillStyle = "#00000044"
     // context.fillRect(dotHitbox.x - dotHitbox.width/2, dotHitbox.y - dotHitbox.height/2, dotHitbox.width, dotHitbox.height);
@@ -344,6 +355,7 @@ document.addEventListener("click", (e) => {
         birdHitbox.x = dotHitbox.x;
         birdHitbox.y = dotHitbox.y;
         isEasterEggStarted = true;
+        window.setInterval(updateGame, 10);
     }
 });
 canvas.addEventListener("mousedown", jump);

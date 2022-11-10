@@ -1,3 +1,9 @@
+@font-face{
+    font-family: "TimesNewRomanBold"; 
+    src: url("fonts/timesbd.ttf");
+    font-weight: normal;
+    font-style: normal;
+}
 body {
     margin: 0;
     display: flex;

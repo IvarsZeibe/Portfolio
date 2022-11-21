@@ -154,12 +154,12 @@ class Hitbox {
     }
 }
 class Obstacle {
-    constructor(x, y, width, height) {
+    constructor(x, y, width, height, minGapY = 0, maxGapY = 1) {
         this.x = x;
         this.width = width;
         this.height = height; 
         this.gapHeight = height*0.2;
-        this.gapY = this.gapHeight + Math.random() * (height - 2*this.gapHeight); 
+        this.gapY = this.gapHeight + Math.min(Math.max(Math.random(), minGapY), maxGapY) * (height - 2*this.gapHeight); 
         this.topPartHeight = this.gapY - this.gapHeight / 2;
         this.bottomPartHeight = height - (this.gapY + this.gapHeight / 2);
         
@@ -211,6 +211,9 @@ let vw = 0;
 let ceilingHeight = 0;
 let screenWidth = 0;
 let ratio = 0;
+let score = 0;
+let highestScore = 0;
+let lastResetTick = 0;
 document.fonts.ready.then(redraw);
 
 addEventListener("resize", redraw);
@@ -263,8 +266,10 @@ function redraw() {
     if (isEasterEggActive || isEasterEggStarted) {        
         // clears dot
         context.clearRect(dotHitbox.x - dotHitbox.width/2, dotHitbox.y - dotHitbox.height/2, dotHitbox.width, dotHitbox.height);
-    }
 
+        context.font = `bold 8${vh < vw ? "vh" : "vw"} TimesNewRomanBold`;
+        context.fillText(`Score: ${score}|${highestScore}`, textPaddingLeft, canvas.height / ratio - 15*vh);
+    }
 }
 
 function updateGame() {
@@ -306,8 +311,18 @@ function updateGame() {
         hasJumped = false;
         if (currenTick - obstacleSpawnedTick > obstacleSpawningCooldown) {
             let obstacleWidth = 4*vw;
-            obstacles.push(new Obstacle(canvas.width / ratio + obstacleWidth/2, (canvas.height / ratio - 10*vh) / 2 + ceilingHeight, obstacleWidth, canvas.height / ratio - 10*vh)); // maybe 10vh
+            let obstacle = new Obstacle(
+                canvas.width / ratio + obstacleWidth/2,
+                (canvas.height / ratio - 10*vh) / 2 + ceilingHeight,
+                obstacleWidth,
+                canvas.height / ratio - 10*vh,
+                0, 0.9);
+            obstacles.push(obstacle); 
             obstacleSpawnedTick = currenTick;
+            score = Math.max(0, Math.ceil((currenTick - lastResetTick - (canvas.width / ratio + obstacleWidth / 2 - birdHitbox.x) / (0.4*vw)) / obstacleSpawningCooldown));
+            if (score > highestScore) {
+                highestScore = score;
+            }
         }
         obstacles.forEach(o => {
             o.move(-0.4*vw, 0);
@@ -348,6 +363,8 @@ function resetFlappyBird() {
     velocity.y = 0;
     velocity.x = 10;
     obstacles = [];
+    score = 0;
+    lastResetTick = currenTick;
 }
 document.addEventListener("click", (e) => {
     let rect = canvas.getBoundingClientRect();
@@ -358,6 +375,7 @@ document.addEventListener("click", (e) => {
         window.setInterval(updateGame, 10);
     }
 });
+
 canvas.addEventListener("mousedown", jump);
 function jump() {
     if (isEasterEggActive && !hasJumped) {

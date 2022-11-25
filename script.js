@@ -284,7 +284,7 @@ const game = {
         const textPaddingLeft = 5*screen.vw;
         const textPaddingTop = 20*screen.vh;
 
-        let text = context.measureText("Ivars Že");       
+        let text = context.measureText("Ivars Že");  
         
         // draw title
         context.fillText("Ivars Žeibe", textPaddingLeft, fontHeight + textPaddingTop);
@@ -307,6 +307,7 @@ const game = {
             context.fillStyle = "lightblue";
             context.beginPath();
             context.arc(bird.hitbox.x, bird.hitbox.y, bird.hitbox.radius, 0, 2*Math.PI);
+            context.closePath();
             context.fill();
             
             // draw ceiling

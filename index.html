@@ -73,18 +73,18 @@
             <h2>Contacts</h2>
             <div class="textbox">
                 <span>Want to get in touch?</span>
-                <form action="javascript:void(0);">
+                <form id="messageForm" action="messages.php" method="post">
                     <label for="email">E-mail</label>
                     <br>
-                    <input id="email" type="email">
+                    <input name="email" type="email">
                     <br>
                     <label for="name">Full name</label>
                     <br>
-                    <input id="name" type="text">
+                    <input name="name" type="text">
                     <br>
                     <label for="message">Message</label>
                     <br>
-                    <textarea id="message" type="text"></textarea>
+                    <textarea name="message" type="text"></textarea>
                     <br>
                     <input id="sendMessage" type="submit" value="Send message">
                 </form>

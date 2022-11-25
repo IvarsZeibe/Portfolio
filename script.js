@@ -93,6 +93,25 @@ window.onscroll = () => {
     previousScrollPosition = currentScrollPos;
 }
 
+// sends form data
+let form = document.getElementById('messageForm');
+form.onsubmit = async (e) => {
+    e.preventDefault();
+    fetch('messages.php', {
+        method: 'POST',
+        body: new FormData(form)
+    }).then(response => {
+        if (!response.ok) {
+            return response.text().then(text => {
+                alert("Error, form not sent");
+                throw new Error(text);
+            })
+        } else {
+            return response.text().then(text => alert(text))
+        }
+    })
+}
+
 // Flappy bird easter egg game
 class Hitbox {
     constructor(shape, x, y, width, height) {

@@ -308,11 +308,15 @@ const game = {
         // draw title
         context.fillText("Ivars Žeibe", textPaddingLeft, fontHeight + textPaddingTop);
         context.fillStyle = "#81c1d6";
-        context.save();
-        context.rect(screen.dotHitbox.x - screen.dotHitbox.width/2, screen.dotHitbox.y - screen.dotHitbox.height/2, screen.dotHitbox.width, screen.dotHitbox.height);
-        context.clip();
-        context.fillText("i", textPaddingLeft + text.width, fontHeight + textPaddingTop);
-        context.restore();
+        
+        // draws dot only if font is loaded
+        if (document.fonts.check(context.font)) {
+            context.save();
+            context.rect(screen.dotHitbox.x - screen.dotHitbox.width/2, screen.dotHitbox.y - screen.dotHitbox.height/2, screen.dotHitbox.width, screen.dotHitbox.height);
+            context.clip();
+            context.fillText("i", textPaddingLeft + text.width, fontHeight + textPaddingTop);
+            context.restore();
+        }
 
         if (this.isActive) {        
             // clears dot above i letter
@@ -419,7 +423,7 @@ addEventListener("resize", () => {
     screen.update();
     game.redraw();
 });
-screen.update();
 document.fonts.ready.then(() => {
+    screen.update();
     game.redraw();
 });

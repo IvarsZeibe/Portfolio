@@ -299,3 +299,22 @@ footer {
 #sendMessage:active {
     background-color: #264581;
 }
+
+#scrollToTopButton {
+    position: fixed;
+    visibility: hidden;
+    background: none;
+    color: white;
+    background: #0c1830;
+    border: none;
+    font-size: 60px;
+    bottom: 0px;
+    right: 10px;
+    width: 80px;
+    height: 80px;
+    border-radius: 10px;
+    z-index: 10;
+}
+#scrollToTopButton:hover {
+    cursor: pointer;
+}

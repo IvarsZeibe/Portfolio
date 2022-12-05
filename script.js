@@ -77,7 +77,7 @@ document.getElementById("navigationButton").addEventListener("click", () => {
     }
 });
 
-// Shows and hides navigation on scroll
+// Shows and hides navigation menu and scroll to top button
 var previousScrollPosition = window.pageYOffset;
 window.onscroll = () => {
     var currentScrollPos = window.pageYOffset;
@@ -85,10 +85,18 @@ window.onscroll = () => {
     let nav = document.getElementById("nav");
     nav.classList.remove("open");
 
+    let scrollToTopButton = document.getElementById('scrollToTopButton');
+
+    let isNearPageTop = currentScrollPos <= parseFloat(window.getComputedStyle(nav, null).height);
+
     if (previousScrollPosition > currentScrollPos) {
         nav.style.top = "0";
-    } else if (currentScrollPos > parseFloat(window.getComputedStyle(nav, null).height)) {
+        if (isNearPageTop) {
+            scrollToTopButton.style.visibility = 'hidden';
+        }
+    } else if (!isNearPageTop) {
         nav.style.top = `-${nav.offsetHeight - 5}px`;
+        scrollToTopButton.style.visibility = 'visible';
     }
     previousScrollPosition = currentScrollPos;
 }

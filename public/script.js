@@ -105,7 +105,7 @@ window.onscroll = () => {
 let form = document.getElementById('messageForm');
 form.onsubmit = async (e) => {
     e.preventDefault();
-    fetch('messages.php', {
+    fetch(window.location.href, {
         method: 'POST',
         body: new FormData(form)
     }).then(response => {

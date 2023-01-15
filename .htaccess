@@ -1,8 +1,6 @@
-DirectoryIndex index.html
+DirectoryIndex index.php
 
 RewriteEngine On
-
-RewriteBase /Portfolio/
 
 RewriteCond %{THE_REQUEST} /public/([^\s?]*) [NC]
 RewriteRule ^ %1 [L,NE,R=302]
